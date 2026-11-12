@@ -12,6 +12,7 @@ import {
   Sheet,
   Title,
   c,
+  moodTone,
   s,
 } from "@/components/demo/ui";
 import { pets, useDemo } from "@/state/demo";
@@ -28,21 +29,22 @@ export default function Home() {
       </Row>
       <Card>
         <Row>
-          <Title>{pet.name}</Title>
-          <Badge>{state.mood.toUpperCase()}</Badge>
+          <Title>{pet.name}&apos;s little world</Title>
+          <Badge tone={moodTone[state.mood] ?? "blue"}>
+            {state.mood.toUpperCase()}
+          </Badge>
         </Row>
         <View style={s.petStage}>
-          <Text
-            style={{ position: "absolute", top: 20, right: 35, fontSize: 26 }}
-          >
-            ☀️
-          </Text>
           <Text style={s.petEmoji}>
             {state.mood === "Hiding" ? "❔" : pet.emoji}
           </Text>
           {state.mood === "Sleepy" && <Text style={{ color: c.green, fontWeight: "600" }}>Z z z …</Text>}
         </View>
-        <Progress value={state.energy} label="Energy" />
+        <Progress
+          value={state.energy}
+          label="Companion energy"
+          color={c.mint}
+        />
         {state.mood === "Hiding" ? (
           <Go label={`Find ${pet.name} →`} href="/hunt" />
         ) : state.energy < 50 ? (
@@ -55,7 +57,11 @@ export default function Home() {
           <Go label="Hatch your egg →" href="/egg" />
         </Card>
       )}
-      <Card tint="#EAF0E1">
+      <Row>
+        <Title>Your next little adventure</Title>
+        <Badge>NO PRESSURE</Badge>
+      </Row>
+      <Card tint={c.tint}>
         <Row>
           <Text style={{ fontSize: 35 }}>🧭</Text>
           <View style={{ flex: 1 }}>

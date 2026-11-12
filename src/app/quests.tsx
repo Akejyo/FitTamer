@@ -99,10 +99,8 @@ export default function Quests() {
             <Card key={quests[i].id}>
               <Row>
                 <Text style={{ fontSize: 32 }}>{quests[i].icon}</Text>
-                <View style={{ flex: 1, alignItems: "flex-start" }}>
-                  <Title>{quests[i].name}</Title>
-                </View>
-                <Badge>+{quests[i].xp} XP</Badge>
+                <Title>{quests[i].name}</Title>
+                <Badge tone="yellow">+{quests[i].xp} XP</Badge>
               </Row>
               <Row>
                 <Copy>10 min · 🥚 Mystery egg</Copy>

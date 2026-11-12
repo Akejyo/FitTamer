@@ -6,6 +6,7 @@ import {
   Card,
   Go,
   Row,
+  rarityTone,
   Screen,
   Title,
   c,
@@ -19,13 +20,17 @@ export default function Pets() {
     <Screen>
       <Row>
         <Title>Your collection</Title>
-        <Badge>{state.unlocked.length} / 100 DISCOVERED</Badge>
+        <Badge tone="purple">
+          {state.unlocked.length} / 100 DISCOVERED
+        </Badge>
       </Row>
-      <Card tint="#EEF0DE">
+      <Card tint={c.tint}>
         <Row>
           <Text style={{ fontSize: 70 }}>{pet.emoji}</Text>
           <View style={{ flex: 1, gap: 5 }}>
-            <Badge>{pet.rarity.toUpperCase()}</Badge>
+            <Badge tone={rarityTone[pet.rarity] ?? "green"}>
+              {pet.rarity.toUpperCase()}
+            </Badge>
             <Title>{pet.name}</Title>
           </View>
         </Row>
@@ -66,14 +71,14 @@ export default function Pets() {
                 borderRadius: 21,
                 borderWidth: 2,
                 borderColor:
-                  unlocked && selected === p.id ? c.green : "#E3E8DB",
-                backgroundColor: unlocked ? "#FFFFFF" : "#EEEFE7",
+                  unlocked && selected === p.id ? c.yellow : c.line,
+                backgroundColor: unlocked ? c.surface : "#161D27",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 7,
               }}
             >
-              <Text style={{ fontSize: 42, color: "#B2BAAA" }}>
+              <Text style={{ fontSize: 42, color: "#4A5566" }}>
                 {unlocked ? p.emoji : "?"}
               </Text>
               {unlocked && <Text style={{ color: c.ink, fontSize: 11 }}>{p.name}</Text>}

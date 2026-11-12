@@ -19,7 +19,7 @@ export const pets = [
     name: "Sprout",
     emoji: "🐸",
     activity: "Jumping jacks",
-    rarity: "Uncommon",
+    rarity: "Super Rare",
   },
 ];
 export const friends = [

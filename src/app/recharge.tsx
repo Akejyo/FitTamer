@@ -134,8 +134,8 @@ export default function Recharge() {
               }
             />
             <Row>
-              <Badge>+{activity.energy} ENERGY</Badge>
-              <Badge>+{rewardXP} XP</Badge>
+              <Badge tone="green">+{activity.energy} ENERGY</Badge>
+              <Badge tone="yellow">+{rewardXP} XP</Badge>
             </Row>
             <Button
               label={paused ? "Resume" : "Pause"}
