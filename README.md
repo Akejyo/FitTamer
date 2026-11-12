@@ -1,56 +1,50 @@
-# Welcome to your Expo app 👋
+# FitTamer
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An Expo SDK 58 / React Native prototype where small movement breaks help a virtual pet grow. The demo implements the team’s prototype flows with shared in-memory state and an English mobile interface.
 
-## Get started
-[[[[[]]]]]
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run
 
 ```bash
-npm run reset-project
+npm ci
+npm run web
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+For a mobile simulator or compatible development client:
 
-### Other setup steps
+```bash
+npm start
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Then use Expo’s terminal options for your device. The existing project uses SDK 58; your device client must support that SDK. Web is the quickest way to present the demo, with no native build required.
 
-## Learn more
+## Presentation walkthrough
 
-To learn more about developing your project with Expo, look at the following resources:
+1. **Recharge:** Home starts with a sleepy Panda. Choose Recharge, select an activity, pause/resume the one-minute guide or use **Demo: skip timer**, then collect rewards. Home’s mood, energy, and XP update. Panda’s favorite planks grant bonus XP.
+2. **Pet hunt:** Start a hunt, invite demo friends to join or watch, and use **Demo: keep walking** three times. The hint changes from cold to hot. Catch the pet, review rewards, and optionally open the share action. A hunt grants rewards once per session.
+3. **Collection:** Finish a quest or hunt to earn an egg. Hatch and claim it, then view and select the new companion in Pets. Three companions are included; other collection slots are placeholders.
+4. **Party:** Create a named party, choose a logo, add friends, and hatch the shared egg. Open Weekly Goal, choose a movement type and 30–300 shared minutes, and save. Demo time controls advance contributions. Complete the goal and evolve Ember from the recap to collect the one-time XP reward.
+5. **Reset:** Home → Demo controls → Reset all demo progress. You can also switch the Home pet between sleepy, happy, and hiding states.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Pages and code
 
-## Join the community
+- `src/app/`: Home, Recharge, Quests, Hunt, Pets, Egg, Party, Weekly Goal. The old `/explore` URL redirects to Quests.
+- `src/components/demo/`: shared mobile layout, cards, buttons, progress bars, sheets, friend picker, and illustrated campus map.
+- `src/state/demo.tsx`: session state and reward transitions shared across routes.
+- `scripts/test-demo.cjs`: reward, collection, and party progression checks.
 
-Join our community of developers creating universal apps.
+## Demo boundaries
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Movement, location, quest completion, friends, invites, and cheers are simulated and labeled in the interface. The map is an illustration, not a GPS map. Native sharing opens the system share sheet; web provides a copyable summary. No invitations or messages are sent automatically.
+
+Progress lasts for the current app session; reload/restart resets it. Daily activity and quest rerolls are enforced within that session. The demo has no authentication, backend, health sensor integration, background tracking, or persistent storage. Party contributions from friends are sample records. New party membership and goals operate locally.
+
+## Validation
+
+```bash
+npm run lint
+npm run typecheck
+npm run test:demo
+npx expo export --platform web
+```
+
+Typed route declarations are generated by Expo. If a fresh checkout reports unknown route paths, run `npm start` once before typechecking.
