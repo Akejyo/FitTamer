@@ -42,11 +42,7 @@ export default function Hunt() {
     }
   }
   return (
-    <Screen
-      title={`Find ${pet.name}.`}
-      subtitle="Follow the feeling. Your companion is somewhere nearby."
-      back
-    >
+    <Screen back>
       <Row>
         <Badge>{complete ? "HUNT COMPLETE" : "CAMPUS HIDE & SEEK"}</Badge>
         <Button
@@ -70,10 +66,6 @@ export default function Hunt() {
       {invited.length > 0 && (
         <Card tint={c.lime}>
           <Copy>💬 {invited[0]}: “You’ve got this! Keep exploring!”</Copy>
-          <Copy muted>
-            {invited.join(", ")} {invited.length === 1 ? "is" : "are"} cheering
-            in this demo.
-          </Copy>
         </Card>
       )}
       <Card>
@@ -87,8 +79,8 @@ export default function Hunt() {
         </Row>
         <Copy muted>
           {started
-            ? "Try the coffee cart. A warm drink and a happy reunion."
-            : "Explore the shaded hint zone. There’s no exact pin to follow."}
+            ? "Try the coffee cart."
+            : "Explore the shaded hint zone."}
         </Copy>
         <Copy>Reward: 🥚 Mystery egg · +30 energy</Copy>
         {complete ? (
@@ -134,7 +126,7 @@ export default function Hunt() {
       >
         <Text style={{ fontSize: 95, textAlign: "center" }}>{pet.emoji}</Text>
         <Copy>
-          Hiding behind the coffee cart. A little wander was all it took.
+          Behind the coffee cart.
         </Copy>
         <Button
           label={`Catch ${pet.name} ✨`}
@@ -147,16 +139,12 @@ export default function Hunt() {
       </Sheet>
       <Sheet
         visible={summary}
-        title="A happy little reunion."
+        title="Hunt complete"
         onClose={() => setSummary(false)}
       >
         <Text style={{ fontSize: 70, textAlign: "center" }}>{pet.emoji}💚</Text>
         <Title>+60 XP · 🥚 Mystery egg</Title>
-        <Copy>+30 energy · 10 simulated movement minutes</Copy>
-        <Copy muted>
-          Found near the coffee cart. {invited.length} demo friends cheered you
-          on.
-        </Copy>
+        <Copy>+30 energy · +10 party minutes</Copy>
         <Button label="Share hunt summary" secondary onPress={share} />
         <Button label="Back home →" onPress={() => router.replace("/")} />
       </Sheet>
@@ -166,7 +154,6 @@ export default function Hunt() {
         onClose={() => setSharing(false)}
       >
         <Copy>{message}</Copy>
-        <Copy muted>Use your browser’s share menu, or copy this summary.</Copy>
         <Button
           label="Copy summary"
           onPress={async () => {
@@ -184,12 +171,11 @@ export default function Hunt() {
       </Sheet>
       <Sheet
         visible={abandon}
-        title="Another time is okay."
+        title="End hunt?"
         onClose={() => setAbandon(false)}
       >
         <Copy>
-          Your companion will find its way home. Come back whenever you’re
-          ready.
+          Your companion will return home.
         </Copy>
         <Button
           label="Back home"

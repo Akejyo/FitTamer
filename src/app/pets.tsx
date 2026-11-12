@@ -4,7 +4,6 @@ import {
   Badge,
   Button,
   Card,
-  Copy,
   Go,
   Row,
   Screen,
@@ -17,10 +16,7 @@ export default function Pets() {
   const [selected, setSelected] = useState(state.activePet);
   const pet = pets.find((p) => p.id === selected)!;
   return (
-    <Screen
-      title="A world of little friends."
-      subtitle="Every adventure brings someone new into your world."
-    >
+    <Screen>
       <Row>
         <Title>Your collection</Title>
         <Badge>{state.unlocked.length} / 100 DISCOVERED</Badge>
@@ -31,13 +27,8 @@ export default function Pets() {
           <View style={{ flex: 1, gap: 5 }}>
             <Badge>{pet.rarity.toUpperCase()}</Badge>
             <Title>{pet.name}</Title>
-            <Copy muted>Loves {pet.activity.toLowerCase()}.</Copy>
           </View>
         </Row>
-        <Copy>
-          Favorite movement earns a little extra joy. Keep exploring to meet
-          more companions.
-        </Copy>
         <Button
           label={
             state.activePet === selected
@@ -85,16 +76,11 @@ export default function Pets() {
               <Text style={{ fontSize: 42, color: "#B2BAAA" }}>
                 {unlocked ? p.emoji : "?"}
               </Text>
-              <Text style={{ color: unlocked ? c.ink : c.muted, fontSize: 11 }}>
-                {unlocked ? p.name : "Undiscovered"}
-              </Text>
+              {unlocked && <Text style={{ color: c.ink, fontSize: 11 }}>{p.name}</Text>}
             </Pressable>
           );
         }}
       />
-      <Copy muted>
-        88 more mysterious friends are waiting beyond this demo.
-      </Copy>
     </Screen>
   );
 }

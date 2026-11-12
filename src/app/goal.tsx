@@ -36,11 +36,7 @@ export default function Goal() {
   );
   if (!state.party)
     return (
-      <Screen
-        title="A goal worth sharing."
-        subtitle="Start with a party, then grow together."
-        back
-      >
+      <Screen back>
         <Card>
           <Copy>Create your party to set a shared weekly goal.</Copy>
           <Go label="Create a party →" href="/party" />
@@ -48,11 +44,7 @@ export default function Goal() {
       </Screen>
     );
   return (
-    <Screen
-      title="Small moves. Shared magic."
-      subtitle={`${state.party.name} · Weekly goal`}
-      back
-    >
+    <Screen back>
       {!state.party.hatched ? (
         <Card>
           <Title>Your party pet is waiting.</Title>
@@ -61,8 +53,8 @@ export default function Goal() {
       ) : (
         <>
           <Card>
-            <Badge>THIS WEEK’S LITTLE CHALLENGE</Badge>
-            <Title>How much shall we move?</Title>
+            <Badge>WEEKLY GOAL</Badge>
+            <Title>Movement goal</Title>
             <Row>
               <Button
                 label="−"
@@ -86,9 +78,6 @@ export default function Goal() {
                 }}
               />
             </Row>
-            <Copy muted>
-              Shared across your whole party. Small steps count.
-            </Copy>
             <Row>
               {["Walking", "Stretching"].map((a) => (
                 <Button
@@ -120,7 +109,7 @@ export default function Goal() {
           </Card>
           <Card tint="#EAF0E1">
             <Row>
-              <Title>Growing Ember together</Title>
+              <Title>Ember</Title>
               <Badge>LEVEL {state.evolved ? 2 : 1}</Badge>
             </Row>
             <Text style={{ fontSize: 80, textAlign: "center" }}>
@@ -147,18 +136,14 @@ export default function Goal() {
           </Card>
           <Card>
             <Badge>DEMO TIME CONTROLS</Badge>
-            <Copy muted>
-              Advance your contribution to demonstrate shared growth. Friends’
-              contributions are sample data.
-            </Copy>
             <Button
-              label="Demo: add 10 movement minutes"
+              label="Demo: +10 min"
               secondary
               disabled={state.evolved}
               onPress={() => dispatch({ type: "move", minutes: 10 })}
             />
             <Button
-              label="Demo: complete the weekly goal"
+              label="Demo: complete goal"
               secondary
               disabled={total >= state.goal || state.evolved}
               onPress={() =>
@@ -171,24 +156,19 @@ export default function Goal() {
           </Card>
           <Sheet
             visible={recap}
-            title="Your week, together."
+            title="Weekly recap"
             onClose={() => setRecap(false)}
           >
             <Badge>
               {total >= state.goal ? "GOAL COMPLETE ✨" : "STILL GROWING 🌱"}
             </Badge>
             <Text style={{ fontSize: 60, textAlign: "center" }}>🏆🦊</Text>
-            <Title>This week’s MVP: {mvp.name}</Title>
-            <Copy>{mvp.minutes} minutes of little adventures.</Copy>
+            <Title>MVP: {mvp.name}</Title>
+            <Copy>{mvp.minutes} min</Copy>
             <Progress
               value={Math.min(100, (total / state.goal) * 100)}
               label={`${total} / ${state.goal} shared minutes`}
             />
-            <Copy>
-              {total >= state.goal
-                ? "Every small contribution helped. Ember is ready to evolve!"
-                : "There’s still time. Every little move counts, at your own pace."}
-            </Copy>
             <Button
               label={
                 state.evolved
@@ -201,7 +181,7 @@ export default function Goal() {
             {state.evolved && (
               <Card tint={c.lime}>
                 <Title>Party level 1 → 2</Title>
-                <Copy>You did this together. +100 XP collected!</Copy>
+                <Copy>+100 XP</Copy>
               </Card>
             )}
           </Sheet>

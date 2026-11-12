@@ -176,19 +176,15 @@ export function Sheet({
   );
 }
 const nav = [
+  { href: "/", label: "Home", icon: "⌂" },
   { href: "/pets", label: "Pets", icon: "♧" },
   { href: "/quests", label: "Quests", icon: "⚑" },
-  { href: "/", label: "Home", icon: "⌂" },
   { href: "/party", label: "Party", icon: "♧♧" },
 ] as const;
 export function Screen({
-  title,
-  subtitle,
   children,
   back = false,
 }: {
-  title: string;
-  subtitle: string;
   children: ReactNode;
   back?: boolean;
 }) {
@@ -199,7 +195,6 @@ export function Screen({
         <View style={s.top}>
           <Row>
             <Text style={s.brand}>✳ FitTamer</Text>
-            <Badge>PLAY. MOVE. GROW.</Badge>
           </Row>
         </View>
         <ScrollView
@@ -216,14 +211,7 @@ export function Screen({
               }
             />
           )}
-          <View style={{ gap: 6 }}>
-            <Text style={s.heading}>{title}</Text>
-            <Copy muted>{subtitle}</Copy>
-          </View>
           {children}
-          <Text style={s.footnote}>
-            INTERACTIVE DEMO · Simulated movement & friends
-          </Text>
         </ScrollView>
         <View style={s.nav}>
           {nav.map((n) => {
@@ -275,13 +263,6 @@ export const s = StyleSheet.create({
   },
   brand: { color: c.ink, fontSize: 21, fontWeight: "800", letterSpacing: -0.7 },
   content: { padding: 24, gap: 20, paddingBottom: 30 },
-  heading: {
-    fontSize: 32,
-    lineHeight: 39,
-    fontWeight: "800",
-    color: c.ink,
-    letterSpacing: -1,
-  },
   title: { fontSize: 19, fontWeight: "700", color: c.ink, flexShrink: 1 },
   copy: { fontSize: 14, lineHeight: 22, color: c.ink, flexShrink: 1 },
   row: {
@@ -360,12 +341,6 @@ export const s = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 17,
     minHeight: 58,
-  },
-  footnote: {
-    textAlign: "center",
-    fontSize: 10,
-    color: c.muted,
-    letterSpacing: 0.6,
   },
   scrim: {
     flex: 1,
