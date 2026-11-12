@@ -1,0 +1,100 @@
+import { useState } from "react";
+import { FlatList, Pressable, Text, View } from "react-native";
+import {
+  Badge,
+  Button,
+  Card,
+  Copy,
+  Go,
+  Row,
+  Screen,
+  Title,
+  c,
+} from "@/components/demo/ui";
+import { pets, useDemo } from "@/state/demo";
+export default function Pets() {
+  const { state, dispatch } = useDemo();
+  const [selected, setSelected] = useState(state.activePet);
+  const pet = pets.find((p) => p.id === selected)!;
+  return (
+    <Screen
+      title="A world of little friends."
+      subtitle="Every adventure brings someone new into your world."
+    >
+      <Row>
+        <Title>Your collection</Title>
+        <Badge>{state.unlocked.length} / 100 DISCOVERED</Badge>
+      </Row>
+      <Card tint="#EEF0DE">
+        <Row>
+          <Text style={{ fontSize: 70 }}>{pet.emoji}</Text>
+          <View style={{ flex: 1, gap: 5 }}>
+            <Badge>{pet.rarity.toUpperCase()}</Badge>
+            <Title>{pet.name}</Title>
+            <Copy muted>Loves {pet.activity.toLowerCase()}.</Copy>
+          </View>
+        </Row>
+        <Copy>
+          Favorite movement earns a little extra joy. Keep exploring to meet
+          more companions.
+        </Copy>
+        <Button
+          label={
+            state.activePet === selected
+              ? "Your current companion ✓"
+              : `Choose ${pet.name}`
+          }
+          disabled={state.activePet === selected}
+          onPress={() => dispatch({ type: "select", id: selected })}
+        />
+      </Card>
+      {state.eggs > 0 && (
+        <Go label={`🥚 Hatch an egg (${state.eggs})`} href="/egg" />
+      )}
+      <FlatList
+        scrollEnabled={false}
+        numColumns={3}
+        data={Array.from({ length: 12 }, (_, i) => i)}
+        keyExtractor={(i) => String(i)}
+        columnWrapperStyle={{ gap: 12 }}
+        contentContainerStyle={{ gap: 12 }}
+        renderItem={({ item }) => {
+          const p = pets[item];
+          const unlocked = !!p && state.unlocked.includes(p.id);
+          return (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                unlocked ? `View ${p.name}` : "Undiscovered pet"
+              }
+              disabled={!unlocked}
+              onPress={() => setSelected(p.id)}
+              style={{
+                flex: 1,
+                aspectRatio: 0.85,
+                borderRadius: 21,
+                borderWidth: 2,
+                borderColor:
+                  unlocked && selected === p.id ? c.green : "#E3E8DB",
+                backgroundColor: unlocked ? "#FFFFFF" : "#EEEFE7",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 7,
+              }}
+            >
+              <Text style={{ fontSize: 42, color: "#B2BAAA" }}>
+                {unlocked ? p.emoji : "?"}
+              </Text>
+              <Text style={{ color: unlocked ? c.ink : c.muted, fontSize: 11 }}>
+                {unlocked ? p.name : "Undiscovered"}
+              </Text>
+            </Pressable>
+          );
+        }}
+      />
+      <Copy muted>
+        88 more mysterious friends are waiting beyond this demo.
+      </Copy>
+    </Screen>
+  );
+}
