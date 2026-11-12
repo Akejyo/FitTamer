@@ -87,22 +87,18 @@ export default function Recharge() {
     setDone(true);
   }
   return (
-    <Screen
-      title={done ? "A little more spark." : "Recharge together"}
-      subtitle="One minute for you. A little energy for your companion."
-      back
-    >
+    <Screen back>
       {done ? (
         <Card tint={c.lime}>
           <Text style={{ fontSize: 80, textAlign: "center" }}>
             {pet.emoji}✨
           </Text>
-          <Title>Your companion feels refreshed!</Title>
+          <Title>Refreshed!</Title>
           <Copy>
-            +{activity?.energy} energy · +{rewardXP} XP · 1 movement minute
+            +{activity?.energy} energy · +{rewardXP} XP · 1 min
           </Copy>
           <Button
-            label="Back to your companion →"
+            label="Back home →"
             onPress={() => router.replace("/")}
           />
         </Card>
@@ -171,8 +167,7 @@ export default function Recharge() {
       ) : (
         <>
           <Row>
-            <Title>Pick your little break</Title>
-            <Badge>YOUR PACE</Badge>
+            <Title>Activities</Title>
           </Row>
           {list.map((index, i) => (
             <Card key={index}>
@@ -187,11 +182,11 @@ export default function Recharge() {
                   (activities[index].name === pet.activity ? 5 : 0)}{" "}
                 XP
                 {activities[index].name === pet.activity
-                  ? " · Favorite activity bonus!"
+                  ? " · +5 bonus"
                   : ""}
               </Copy>
               <Button
-                label="Let’s do this →"
+                label="Start →"
                 onPress={() => setSelected(index)}
               />
             </Card>

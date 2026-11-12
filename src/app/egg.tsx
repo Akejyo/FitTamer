@@ -16,11 +16,7 @@ export default function Egg() {
   const [hatched, setHatched] = useState(false);
   const next = pets.find((p) => !state.unlocked.includes(p.id));
   return (
-    <Screen
-      title={hatched ? "Hello, little friend!" : "Something wonderful inside."}
-      subtitle="A little surprise, earned by getting out there."
-      back
-    >
+    <Screen back>
       <Card tint={c.peach}>
         {state.eggs < 1 ? (
           <>
@@ -33,8 +29,7 @@ export default function Egg() {
           </>
         ) : !next ? (
           <>
-            <Title>You met every demo companion!</Title>
-            <Copy>Your remaining eggs are saved for future friends.</Copy>
+            <Title>Collection complete</Title>
             <Button
               label="View collection"
               onPress={() => router.replace("/pets")}
@@ -53,13 +48,8 @@ export default function Egg() {
               {hatched ? next.emoji : "🥚"}
             </Text>
             <Title>
-              {hatched ? `Meet ${next.name}` : "An egg full of possibility."}
+              {hatched ? `Meet ${next.name}` : "Mystery egg"}
             </Title>
-            <Copy>
-              {hatched
-                ? `${next.name} loves ${next.activity.toLowerCase()}. Ready to grow together?`
-                : "Your next companion is one tap away."}
-            </Copy>
             <Button
               label={hatched ? "Claim companion →" : "Hatch egg ✨"}
               onPress={() => {
