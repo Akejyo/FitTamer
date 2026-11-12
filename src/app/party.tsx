@@ -27,12 +27,9 @@ export default function Party() {
   const [error, setError] = useState("");
   const total = partyMinutes(state);
   return (
-    <Screen
-      title="Better, together."
-      subtitle="Your friends. A shared companion. Small wins for everyone."
-    >
+    <Screen>
       <Row>
-        <Title>Your people</Title>
+        <Title>Friends</Title>
         <Button
           label="Search +"
           secondary
@@ -48,9 +45,7 @@ export default function Party() {
             <Text style={{ fontSize: 30 }}>{f.emoji}</Text>
             <View style={{ flex: 1 }}>
               <Title>{f.name}</Title>
-              <Copy muted>Ready for a little adventure</Copy>
             </View>
-            <Badge>DEMO</Badge>
           </Row>
         ))}
       </Card>
@@ -62,7 +57,7 @@ export default function Party() {
               <View style={{ flex: 1 }}>
                 <Title>{state.party.name}</Title>
                 <Copy muted>
-                  You + {state.party.members.length} friends · co-op companions
+                  You + {state.party.members.length} friends
                 </Copy>
               </View>
               <Badge>LV {state.evolved ? 2 : 1}</Badge>
@@ -75,15 +70,10 @@ export default function Party() {
             <Title>
               {state.party.hatched
                 ? state.evolved
-                  ? "Ember evolved. Together!"
-                  : "Meet Ember, your party pet."
-                : "Your party’s first shared egg."}
+                  ? "Ember evolved!"
+                  : "Ember"
+                : "Party egg"}
             </Title>
-            <Copy muted>
-              {state.party.hatched
-                ? "Every little move helps your shared companion grow."
-                : "A new adventure starts with your whole squad."}
-            </Copy>
             {state.party.hatched ? (
               <>
                 <Progress
@@ -133,17 +123,13 @@ export default function Party() {
       ) : (
         <Card tint={c.lime}>
           <Text style={{ fontSize: 65, textAlign: "center" }}>🥚🌱</Text>
-          <Title>Your next adventure is a team effort.</Title>
-          <Copy>
-            Create a party, hatch a shared pet, and help it grow with your
-            friends. Every contribution counts.
-          </Copy>
+          <Title>Create a party</Title>
           <Button label="+ Create a party" onPress={() => setCreate(true)} />
         </Card>
       )}
       <Sheet
         visible={create}
-        title="Make it your own."
+        title="New party"
         onClose={() => setCreate(false)}
       >
         <Copy>Party name</Copy>
@@ -204,8 +190,7 @@ export default function Party() {
         onClose={() => setLeave(false)}
       >
         <Copy>
-          Your personal pets and XP stay with you. The shared party will be
-          cleared in this demo.
+          Your pets and XP will be kept.
         </Copy>
         <Button label="Stay with my party" onPress={() => setLeave(false)} />
         <Button

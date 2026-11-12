@@ -1,7 +1,19 @@
-import { useState } from 'react';
-import { Text } from 'react-native';
-import { Badge, Button, Card, Copy, Go, Progress, Row, Screen, Sheet, Title, c } from '@/components/demo/ui';
-import { friends, partyMinutes, useDemo } from '@/state/demo';
+import { useState } from "react";
+import { Text } from "react-native";
+import {
+  Badge,
+  Button,
+  Card,
+  Copy,
+  Go,
+  Progress,
+  Row,
+  Screen,
+  Sheet,
+  Title,
+  c,
+} from "@/components/demo/ui";
+import { friends, partyMinutes, useDemo } from "@/state/demo";
 export default function Goal() {
     const { state, dispatch } = useDemo();
     const [minutes, setMinutes] = useState(state.goal);

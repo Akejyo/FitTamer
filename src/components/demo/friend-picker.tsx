@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Text } from "react-native";
 import { friends } from "@/state/demo";
-import { Badge, Button, Copy, Field, Row, Sheet } from "./ui";
+import { Button, Copy, Field, Row, Sheet } from "./ui";
 export function FriendPicker({
   visible,
   onClose,
@@ -47,7 +47,6 @@ export function FriendPicker({
         <Row key={f.name}>
           <Text style={{ fontSize: 30 }}>{f.emoji}</Text>
           <Copy>{f.name}</Copy>
-          <Badge>DEMO FRIEND</Badge>
           <Button
             secondary
             label={selected.includes(f.name) ? "✓ Added" : "+ Add"}
@@ -64,13 +63,8 @@ export function FriendPicker({
       {filtered.length === 0 && (
         <Copy>No friends found. Try Ben, Priya, or Sam.</Copy>
       )}
-      <Copy muted>
-        {hunt
-          ? `Invites are simulated. Selected friends will ${mode === "Join hunt" ? "join your hunt" : "watch and send cheers"}.`
-          : "Demo members respond immediately. No messages are sent."}
-      </Copy>
       <Button
-        label={hunt ? `Confirm ${selected.length} demo invites` : "Done"}
+        label={hunt ? `Invite (${selected.length})` : "Done"}
         onPress={onClose}
       />
     </Sheet>

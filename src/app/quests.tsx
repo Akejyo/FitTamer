@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 import { router } from "expo-router";
 import {
   Badge,
@@ -60,10 +60,7 @@ export default function Quests() {
     setArrived(false);
   }
   return (
-    <Screen
-      title="Follow your curiosity."
-      subtitle="Small quests. Fresh air. A little something to bring home."
-    >
+    <Screen>
       <Row>
         <Title>{map ? "Around campus" : "Today’s adventures"}</Title>
         <Button
@@ -105,7 +102,6 @@ export default function Quests() {
                 <Title>{quests[i].name}</Title>
                 <Badge tone="yellow">+{quests[i].xp} XP</Badge>
               </Row>
-              <Copy muted>{quests[i].text}</Copy>
               <Row>
                 <Copy>10 min · 🥚 Mystery egg</Copy>
                 <Badge>{quests[i].place.toUpperCase()}</Badge>
@@ -136,7 +132,7 @@ export default function Quests() {
         </>
       )}
       <Button
-        label="Looking for your companion? Start a hunt →"
+        label="Start a pet hunt →"
         secondary
         onPress={() => router.push("/hunt")}
       />
@@ -148,11 +144,8 @@ export default function Quests() {
         {arrived ? (
           <>
             <Text style={{ fontSize: 70, textAlign: "center" }}>🥚✨</Text>
-            <Title>Look what you brought home.</Title>
             <Copy>+{q?.xp} XP · +30 energy · 1 mystery egg</Copy>
-            <Copy muted>
-              10 simulated movement minutes added to your party contribution.
-            </Copy>
+            <Copy>+10 party minutes</Copy>
             <Button
               label="Hatch your reward →"
               onPress={() => {
@@ -164,11 +157,6 @@ export default function Quests() {
         ) : (
           <>
             <Copy>{q?.text}</Copy>
-            <Badge>SIMULATED QUEST · NO GPS REQUIRED</Badge>
-            <Copy muted>
-              In the full app, movement would verify this quest. Use the demo
-              button to walk through the reward flow.
-            </Copy>
             <Button
               label="Demo: finish this adventure"
               onPress={() => {
