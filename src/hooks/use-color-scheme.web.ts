@@ -1,5 +1,5 @@
-import { useSyncExternalStore } from 'react';
-import { useColorScheme as useRNColorScheme } from 'react-native';
+import { useSyncExternalStore } from "react";
+import { useColorScheme as useRNColorScheme } from "react-native";
 
 const subscribe = () => () => {};
 const clientSnapshot = () => true;
@@ -7,7 +7,11 @@ const serverSnapshot = () => false;
 
 /** Keep server HTML and the first hydration render on the same theme. */
 export function useColorScheme() {
-  const hydrated = useSyncExternalStore(subscribe, clientSnapshot, serverSnapshot);
+  const hydrated = useSyncExternalStore(
+    subscribe,
+    clientSnapshot,
+    serverSnapshot,
+  );
   const colorScheme = useRNColorScheme();
-  return hydrated ? colorScheme : 'light';
+  return hydrated ? colorScheme : "light";
 }
