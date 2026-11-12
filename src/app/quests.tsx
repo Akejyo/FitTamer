@@ -103,7 +103,7 @@ export default function Quests() {
               <Row>
                 <Text style={{ fontSize: 32 }}>{quests[i].icon}</Text>
                 <Title>{quests[i].name}</Title>
-                <Badge>+{quests[i].xp} XP</Badge>
+                <Badge tone="yellow">+{quests[i].xp} XP</Badge>
               </Row>
               <Copy muted>{quests[i].text}</Copy>
               <Row>

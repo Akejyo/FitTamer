@@ -56,7 +56,7 @@ export default function Party() {
       </Card>
       {state.party ? (
         <>
-          <Card tint="#EAF0E1">
+          <Card tint={c.tint}>
             <Row>
               <Text style={{ fontSize: 32 }}>{state.party.logo}</Text>
               <View style={{ flex: 1 }}>
