@@ -20,9 +20,7 @@ export default function Pets() {
     <Screen>
       <Row>
         <Title>Your collection</Title>
-        <Badge tone="purple">
-          {state.unlocked.length} / 100 DISCOVERED
-        </Badge>
+        <Badge tone="purple">{state.unlocked.length} / 100 DISCOVERED</Badge>
       </Row>
       <Card tint={c.tint}>
         <Row>
@@ -48,6 +46,8 @@ export default function Pets() {
         <Go label={`🥚 Hatch an egg (${state.eggs})`} href="/egg" />
       )}
       <FlatList
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         scrollEnabled={false}
         numColumns={3}
         data={Array.from({ length: 12 }, (_, i) => i)}
@@ -70,8 +70,7 @@ export default function Pets() {
                 aspectRatio: 0.85,
                 borderRadius: 21,
                 borderWidth: 2,
-                borderColor:
-                  unlocked && selected === p.id ? c.yellow : c.line,
+                borderColor: unlocked && selected === p.id ? c.yellow : c.line,
                 backgroundColor: unlocked ? c.surface : "#161D27",
                 alignItems: "center",
                 justifyContent: "center",
@@ -81,7 +80,9 @@ export default function Pets() {
               <Text style={{ fontSize: 42, color: "#4A5566" }}>
                 {unlocked ? p.emoji : "?"}
               </Text>
-              {unlocked && <Text style={{ color: c.ink, fontSize: 11 }}>{p.name}</Text>}
+              {unlocked && (
+                <Text style={{ color: c.ink, fontSize: 11 }}>{p.name}</Text>
+              )}
             </Pressable>
           );
         }}

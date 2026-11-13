@@ -56,9 +56,7 @@ export default function Party() {
               <Text style={{ fontSize: 32 }}>{state.party.logo}</Text>
               <View style={{ flex: 1 }}>
                 <Title>{state.party.name}</Title>
-                <Copy muted>
-                  You + {state.party.members.length} friends
-                </Copy>
+                <Copy muted>You + {state.party.members.length} friends</Copy>
               </View>
               <Badge>LV {state.evolved ? 2 : 1}</Badge>
             </Row>
@@ -189,9 +187,7 @@ export default function Party() {
         title="Leave your party?"
         onClose={() => setLeave(false)}
       >
-        <Copy>
-          Your pets and XP will be kept.
-        </Copy>
+        <Copy>Your pets and XP will be kept.</Copy>
         <Button label="Stay with my party" onPress={() => setLeave(false)} />
         <Button
           label="Leave party"

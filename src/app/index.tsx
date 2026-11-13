@@ -38,7 +38,9 @@ export default function Home() {
           <Text style={s.petEmoji}>
             {state.mood === "Hiding" ? "❔" : pet.emoji}
           </Text>
-          {state.mood === "Sleepy" && <Text style={{ color: c.green, fontWeight: "600" }}>Z z z …</Text>}
+          {state.mood === "Sleepy" && (
+            <Text style={{ color: c.green, fontWeight: "600" }}>Z z z …</Text>
+          )}
         </View>
         <Progress
           value={state.energy}
