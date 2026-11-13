@@ -97,10 +97,7 @@ export default function Recharge() {
           <Copy>
             +{activity?.energy} energy · +{rewardXP} XP · 1 min
           </Copy>
-          <Button
-            label="Back home →"
-            onPress={() => router.replace("/")}
-          />
+          <Button label="Back home →" onPress={() => router.replace("/")} />
         </Card>
       ) : activity ? (
         <>
@@ -181,14 +178,9 @@ export default function Recharge() {
                 {activities[index].xp +
                   (activities[index].name === pet.activity ? 5 : 0)}{" "}
                 XP
-                {activities[index].name === pet.activity
-                  ? " · +5 bonus"
-                  : ""}
+                {activities[index].name === pet.activity ? " · +5 bonus" : ""}
               </Copy>
-              <Button
-                label="Start →"
-                onPress={() => setSelected(index)}
-              />
+              <Button label="Start →" onPress={() => setSelected(index)} />
             </Card>
           ))}
           <Button

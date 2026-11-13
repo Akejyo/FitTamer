@@ -47,9 +47,7 @@ export default function Egg() {
             >
               {hatched ? next.emoji : "🥚"}
             </Text>
-            <Title>
-              {hatched ? `Meet ${next.name}` : "Mystery egg"}
-            </Title>
+            <Title>{hatched ? `Meet ${next.name}` : "Mystery egg"}</Title>
             <Button
               label={hatched ? "Claim companion →" : "Hatch egg ✨"}
               onPress={() => {

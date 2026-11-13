@@ -216,6 +216,8 @@ export function Sheet({
       <View style={s.scrim}>
         <SafeAreaView style={s.modalArea}>
           <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={s.sheet}
           >
@@ -288,6 +290,8 @@ export function Screen({
           </Row>
         </View>
         <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           style={{ flex: 1 }}
           contentContainerStyle={s.content}
           keyboardShouldPersistTaps="handled"
