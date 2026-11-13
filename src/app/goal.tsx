@@ -13,7 +13,7 @@ import {
   Title,
   c,
 } from "@/components/demo/ui";
-import { friends, partyMinutes, useDemo } from "@/state/demo";
+import { partyMinutes, useDemo } from "@/state/demo";
 export default function Goal() {
   const { state, dispatch } = useDemo();
   const [minutes, setMinutes] = useState(state.goal);
@@ -23,12 +23,12 @@ export default function Goal() {
   const total = partyMinutes(state);
   const contributors = [
     {
-      name: "Marcus (you)",
+      name: `${state.username} (you)`,
       minutes: state.minutes,
       activity: state.activity,
-      emoji: "🐼",
+      emoji: state.avatar,
     },
-    ...friends.filter((f) => state.party?.members.includes(f.name)),
+    ...state.friends.filter((f) => state.party?.members.includes(f.name)),
   ];
   const mvp = contributors.reduce(
     (best, f) => (f.minutes > best.minutes ? f : best),

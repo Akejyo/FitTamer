@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import {
   Badge,
   Button,
@@ -15,40 +15,20 @@ import {
   c,
 } from "@/components/demo/ui";
 import { FriendPicker } from "@/components/demo/friend-picker";
-import { friends, partyMinutes, useDemo } from "@/state/demo";
+import { partyMinutes, useDemo } from "@/state/demo";
 export default function Party() {
   const { state, dispatch } = useDemo();
   const [create, setCreate] = useState(false);
   const [name, setName] = useState("Night Owls");
   const [logo, setLogo] = useState("🌙");
-  const [members, setMembers] = useState<string[]>([]);
+  const members = state.draft;
+  const setMembers = (m: string[]) => dispatch({ type: "draft", members: m });
   const [picker, setPicker] = useState(false);
   const [leave, setLeave] = useState(false);
   const [error, setError] = useState("");
   const total = partyMinutes(state);
   return (
     <Screen>
-      <Row>
-        <Title>Friends</Title>
-        <Button
-          label="Search +"
-          secondary
-          onPress={() => {
-            setMembers(state.party?.members ?? []);
-            setPicker(true);
-          }}
-        />
-      </Row>
-      <Card>
-        {friends.map((f) => (
-          <Row key={f.name}>
-            <Text style={{ fontSize: 30 }}>{f.emoji}</Text>
-            <View style={{ flex: 1 }}>
-              <Title>{f.name}</Title>
-            </View>
-          </Row>
-        ))}
-      </Card>
       {state.party ? (
         <>
           <Card tint={c.tint}>
@@ -90,16 +70,18 @@ export default function Party() {
           <Card>
             <Title>In your party</Title>
             <Row>
-              <Copy>🐼 Marcus (you)</Copy>
+              <Copy>
+              {state.avatar} {state.username} (you)
+            </Copy>
               <Badge>{state.completed.length} QUESTS</Badge>
             </Row>
             {state.party.members.map((member) => (
               <Row key={member}>
                 <Copy>
-                  {friends.find((f) => f.name === member)?.emoji} {member}
+                  {state.friends.find((f) => f.name === member)?.emoji} {member}
                 </Copy>
                 <Badge>
-                  {friends.find((f) => f.name === member)?.minutes} MIN
+                  {state.friends.find((f) => f.name === member)?.minutes} MIN
                 </Badge>
               </Row>
             ))}
@@ -123,6 +105,37 @@ export default function Party() {
           <Text style={{ fontSize: 65, textAlign: "center" }}>🥚🌱</Text>
           <Title>Create a party</Title>
           <Button label="+ Create a party" onPress={() => setCreate(true)} />
+        </Card>
+      )}
+      {!state.party && (
+        <Card>
+          <Row>
+            <Title>In your party</Title>
+            <Badge tone="orange">NO PARTY YET</Badge>
+          </Row>
+          <Copy muted>
+            Your party is empty. Create one and invite friends to grow a pet
+            together.
+          </Copy>
+          <Row>
+            <Copy>
+              {state.avatar} {state.username} (you)
+            </Copy>
+          </Row>
+          {members.map((member) => (
+            <Row key={member}>
+              <Copy>
+                {state.friends.find((f) => f.name === member)?.emoji} {member}
+              </Copy>
+              <Badge tone="green">PICKED</Badge>
+            </Row>
+          ))}
+          {Array.from({ length: Math.max(0, 3 - members.length) }, (_, i) => (
+            <View key={i} style={styles.slot}>
+              <Copy muted>+ Open slot</Copy>
+            </View>
+          ))}
+          <Go label="Find friends →" href="/friends" secondary />
         </Card>
       )}
       <Sheet
@@ -202,3 +215,13 @@ export default function Party() {
     </Screen>
   );
 }
+const styles = StyleSheet.create({
+  slot: {
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: c.line,
+    borderRadius: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+});

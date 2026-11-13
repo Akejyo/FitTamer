@@ -22,7 +22,28 @@ export const pets = [
     rarity: "Super Rare",
   },
 ];
-export const friends = [
+export const DEFAULT_AVATAR = "👤";
+export const avatarOptions = [
+  DEFAULT_AVATAR,
+  "🐼",
+  "🦊",
+  "🐨",
+  "🐯",
+  "🐸",
+  "🐵",
+  "🦁",
+  "🐧",
+  "🦄",
+  "🐙",
+  "🐲",
+];
+export type Friend = {
+  name: string;
+  emoji: string;
+  minutes: number;
+  activity: string;
+};
+export const friends: Friend[] = [
   { name: "Ben", emoji: "🐻", minutes: 22, activity: "Walking" },
   { name: "Priya", emoji: "🐱", minutes: 18, activity: "Stretching" },
   { name: "Sam", emoji: "🐰", minutes: 9, activity: "Walking" },
@@ -47,6 +68,10 @@ type State = {
   evolved: boolean;
   rechargeReroll: string | null;
   questReroll: string | null;
+  draft: string[];
+  friends: Friend[];
+  username: string;
+  avatar: string;
 };
 const initial: State = {
   energy: 25,
@@ -63,6 +88,10 @@ const initial: State = {
   evolved: false,
   rechargeReroll: null,
   questReroll: null,
+  draft: [],
+  friends,
+  username: "User",
+  avatar: DEFAULT_AVATAR,
 };
 type Action =
   | {
@@ -95,6 +124,22 @@ type Action =
     }
   | {
       type: "members";
+      members: string[];
+    }
+  | {
+      type: "addFriend";
+      friend: Friend;
+    }
+  | {
+      type: "avatar";
+      avatar: string;
+    }
+  | {
+      type: "rename";
+      username: string;
+    }
+  | {
+      type: "draft";
       members: string[];
     }
   | {
@@ -172,6 +217,18 @@ export function demoReducer(s: State, a: Action): State {
       };
     case "members":
       return s.party ? { ...s, party: { ...s.party, members: a.members } } : s;
+    case "addFriend":
+      return s.friends.some(
+        (f) => f.name.toLowerCase() === a.friend.name.toLowerCase(),
+      )
+        ? s
+        : { ...s, friends: [...s.friends, a.friend] };
+    case "avatar":
+      return { ...s, avatar: a.avatar };
+    case "rename":
+      return a.username.trim() ? { ...s, username: a.username.trim() } : s;
+    case "draft":
+      return { ...s, draft: a.members };
     case "leave":
       return { ...s, party: null, evolved: false };
     case "hatchParty":

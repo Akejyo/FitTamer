@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Text } from "react-native";
-import { friends } from "@/state/demo";
+import { useDemo } from "@/state/demo";
 import { Button, Copy, Field, Row, Sheet } from "./ui";
 export function FriendPicker({
   visible,
@@ -15,9 +15,10 @@ export function FriendPicker({
   onChange: (names: string[]) => void;
   hunt?: boolean;
 }) {
+  const { state } = useDemo();
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState("Join hunt");
-  const filtered = friends.filter((f) =>
+  const filtered = state.friends.filter((f) =>
     f.name.toLowerCase().includes(query.toLowerCase()),
   );
   return (
@@ -61,7 +62,7 @@ export function FriendPicker({
         </Row>
       ))}
       {filtered.length === 0 && (
-        <Copy>No friends found. Try Ben, Priya, or Sam.</Copy>
+        <Copy>No friends found.</Copy>
       )}
       <Button
         label={hunt ? `Invite (${selected.length})` : "Done"}
