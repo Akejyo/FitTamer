@@ -77,7 +77,12 @@ export default function Home() {
           <Go label="⚑ Quests" href="/quests" secondary />
         </View>
         <View style={{ flex: 1 }}>
-          <Go label="♧ Party" href="/party" secondary />
+          <Go
+            label="Party"
+            href="/party"
+            secondary
+            icon={{ ios: "person.3.fill", android: "groups", web: "groups" }}
+          />
         </View>
       </Row>
       <Button

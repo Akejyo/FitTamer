@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Modal,
   Pressable,
@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, usePathname, type Href } from "expo-router";
 import { Image } from "expo-image";
 import { SymbolView, type SymbolViewProps } from "expo-symbols";
+import { avatarOptions, DEFAULT_AVATAR, useDemo } from "@/state/demo";
 export const c = {
   ink: "#E8EDF4", // main text
   muted: "#95A1B2", // secondary text
@@ -67,12 +68,15 @@ export function Button({
   onPress,
   secondary = false,
   disabled = false,
+  icon,
 }: {
   label: string;
   onPress: () => void;
   secondary?: boolean;
   disabled?: boolean;
+  icon?: SymbolViewProps["name"];
 }) {
+  const color = secondary ? c.ink : s.buttonText.color;
   return (
     <Pressable
       accessibilityRole="button"
@@ -86,7 +90,10 @@ export function Button({
         pressed && { opacity: 0.7 },
       ]}
     >
-      <Text style={[s.buttonText, secondary && { color: c.ink }]}>{label}</Text>
+      <View style={s.buttonInner}>
+        {icon && <SymbolView name={icon} size={20} tintColor={color} />}
+        <Text style={[s.buttonText, { color }]}>{label}</Text>
+      </View>
     </Pressable>
   );
 }
@@ -94,16 +101,19 @@ export function Go({
   label,
   href,
   secondary = false,
+  icon,
 }: {
   label: string;
   href: Href;
   secondary?: boolean;
+  icon?: SymbolViewProps["name"];
 }) {
   return (
     <Button
       label={label}
       onPress={() => router.push(href)}
       secondary={secondary}
+      icon={icon}
     />
   );
 }
@@ -264,6 +274,226 @@ const nav: {
     activeIcon: { ios: "person.3.fill", android: "groups", web: "groups" },
   },
 ];
+function ProfileButton() {
+  const { state, dispatch } = useDemo();
+  const [open, setOpen] = useState(false);
+  const [view, setView] = useState<"profile" | "settings">("profile");
+  const [renaming, setRenaming] = useState(false);
+  const [draftName, setDraftName] = useState("");
+  const [picking, setPicking] = useState(false);
+  const close = () => {
+    setRenaming(false);
+    setPicking(false);
+    setView("profile");
+    setOpen(false);
+  };
+  const openSettings = (pick = false) => {
+    setPicking(pick);
+    setRenaming(false);
+    setView("settings");
+  };
+  const startRename = () => {
+    setDraftName(state.username);
+    setRenaming(true);
+  };
+  const saveName = () => {
+    if (!draftName.trim()) return;
+    dispatch({ type: "rename", username: draftName });
+    setRenaming(false);
+  };
+  const level = Math.floor(state.xp / 100) + 1;
+  const stats: [string, number][] = [
+    ["XP", state.xp],
+    ["Quests", state.completed.length],
+    ["Pets", state.unlocked.length],
+    ["Eggs", state.eggs],
+  ];
+  return (
+    <>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Open profile"
+        onPress={() => setOpen(true)}
+        style={s.avatar}
+      >
+        <Text style={{ fontSize: 20 }}>{state.avatar}</Text>
+      </Pressable>
+      <Sheet
+        visible={open}
+        title={view === "settings" ? "Settings" : "Profile"}
+        onClose={close}
+      >
+        {view === "profile" ? (
+          <>
+            <Row>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Change profile picture"
+                onPress={() => openSettings(true)}
+                style={[s.avatar, s.avatarLarge]}
+              >
+                <Text style={{ fontSize: 36 }}>{state.avatar}</Text>
+              </Pressable>
+              <View style={{ flex: 1, gap: 4 }}>
+                <Title>{state.username}</Title>
+                <Copy muted>Joined Sept 2026</Copy>
+              </View>
+              <Badge tone="orange">LV {level}</Badge>
+            </Row>
+            <View style={s.statGrid}>
+              {stats.map(([label, value]) => (
+                <View key={label} style={s.stat}>
+                  <Text style={s.statValue}>{value}</Text>
+                  <Text style={s.statLabel}>{label}</Text>
+                </View>
+              ))}
+            </View>
+            <Card>
+              <Row>
+                <Copy>Party</Copy>
+                <Copy muted>
+                  {state.party
+                    ? `${state.party.logo} ${state.party.name}`
+                    : "None"}
+                </Copy>
+              </Row>
+              <Row>
+                <Copy>Weekly goal</Copy>
+                <Copy muted>{state.goal} min</Copy>
+              </Row>
+              <Row>
+                <Copy>Favorite activity</Copy>
+                <Copy muted>{state.activity}</Copy>
+              </Row>
+            </Card>
+            <Button
+              label="Settings"
+              secondary
+              icon={{
+                ios: "gearshape.fill",
+                android: "settings",
+                web: "settings",
+              }}
+              onPress={() => openSettings()}
+            />
+            <Button label="Sign out" secondary onPress={close} />
+          </>
+        ) : (
+          <>
+            <Card>
+              <Row>
+                <View style={[s.avatar, s.avatarLarge]}>
+                  <Text style={{ fontSize: 36 }}>{state.avatar}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Title>Profile picture</Title>
+                </View>
+              </Row>
+              {picking ? (
+                <>
+                  <View style={s.avatarGrid}>
+                    {avatarOptions.map((a) => {
+                      const selected = state.avatar === a;
+                      return (
+                        <Pressable
+                          key={a}
+                          accessibilityRole="button"
+                          accessibilityLabel={
+                            a === DEFAULT_AVATAR
+                              ? "Default picture"
+                              : `Picture ${a}`
+                          }
+                          accessibilityState={{ selected }}
+                          onPress={() =>
+                            dispatch({ type: "avatar", avatar: a })
+                          }
+                          style={[
+                            s.avatar,
+                            s.avatarOption,
+                            selected && s.avatarSelected,
+                          ]}
+                        >
+                          <Text style={{ fontSize: 26 }}>{a}</Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                  <Row>
+                    <View style={{ flex: 1 }}>
+                      <Button
+                        label="Reset to default"
+                        secondary
+                        disabled={state.avatar === DEFAULT_AVATAR}
+                        onPress={() =>
+                          dispatch({ type: "avatar", avatar: DEFAULT_AVATAR })
+                        }
+                      />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Button label="Done" onPress={() => setPicking(false)} />
+                    </View>
+                  </Row>
+                </>
+              ) : (
+                <Button
+                  label="Change picture"
+                  secondary
+                  onPress={() => setPicking(true)}
+                />
+              )}
+            </Card>
+            <Card>
+              <Title>Name</Title>
+              {renaming ? (
+                <>
+                  <Field
+                    placeholder="Username"
+                    value={draftName}
+                    onChangeText={setDraftName}
+                  />
+                  <Row>
+                    <View style={{ flex: 1 }}>
+                      <Button
+                        label="Cancel"
+                        secondary
+                        onPress={() => setRenaming(false)}
+                      />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Button
+                        label="Save name"
+                        disabled={!draftName.trim()}
+                        onPress={saveName}
+                      />
+                    </View>
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Copy muted>{state.username}</Copy>
+                  <Button
+                    label="Change name"
+                    secondary
+                    onPress={startRename}
+                  />
+                </>
+              )}
+            </Card>
+            <Button
+              label="← Back to profile"
+              secondary
+              onPress={() => {
+                setRenaming(false);
+                setPicking(false);
+                setView("profile");
+              }}
+            />
+          </>
+        )}
+      </Sheet>
+    </>
+  );
+}
 export function Screen({
   children,
   back = false,
@@ -286,7 +516,24 @@ export function Screen({
               />
               <Text style={s.brand}>FitTamer</Text>
             </View>
-            <Badge>PLAY. MOVE. GROW.</Badge>
+            <View style={s.brandRow}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Friends"
+                onPress={() => router.push("/friends")}
+                style={[
+                  s.avatar,
+                  path === "/friends" && { backgroundColor: c.orangeLight },
+                ]}
+              >
+                <SymbolView
+                  name={{ ios: "person.2.fill", android: "people", web: "people" }}
+                  size={20}
+                  tintColor={c.ink}
+                />
+              </Pressable>
+              <ProfileButton />
+            </View>
           </Row>
         </View>
         <ScrollView
@@ -362,6 +609,42 @@ export const s = StyleSheet.create({
   },
   brandRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   logo: { width: 30, height: 30 },
+  buttonInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  avatar: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: c.surface,
+    borderWidth: 1,
+    borderColor: c.line,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarLarge: { width: 64, height: 64, borderRadius: 32 },
+  avatarGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    justifyContent: "center",
+  },
+  avatarOption: { width: 54, height: 54, borderRadius: 27, borderWidth: 2 },
+  avatarSelected: { borderColor: c.yellow, backgroundColor: c.tint },
+  statGrid: { flexDirection: "row", gap: 10 },
+  stat: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 16,
+    backgroundColor: c.tint,
+    gap: 2,
+  },
+  statValue: { color: c.ink, fontSize: 18, fontWeight: "800" },
+  statLabel: { color: c.muted, fontSize: 11, fontWeight: "700" },
   brand: { color: c.ink, fontSize: 21, fontWeight: "800", letterSpacing: -0.7 },
   content: { padding: 24, gap: 20, paddingBottom: 30 },
   title: { fontSize: 19, fontWeight: "700", color: c.ink, flexShrink: 1 },
