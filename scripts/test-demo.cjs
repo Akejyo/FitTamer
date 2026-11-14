@@ -63,3 +63,15 @@ test('activity and quest rerolls remain independent and reset clears progress', 
   assert.equal(state.rechargeReroll, '2026-11-12');
   assert.equal(reduce(state, { type: 'reset' }).questReroll, null);
 });
+test('XP goes to the active pet and hatching records a hatch date', () => {
+  let state = reduce(fresh(), { type: 'quest', id: 'library', xp: 50 });
+  assert.equal(state.petXp.panda, 170);
+  state = reduce(state, { type: 'claim' });
+  assert.match(state.hatchedAt.fox, /^\d{4}-\d{2}-\d{2}$/);
+  state = reduce(state, { type: 'select', id: 'fox' });
+  state = reduce(state, { type: 'recharge', energy: 10, xp: 10, minutes: 1 });
+  assert.equal(state.petXp.fox, 10);
+  assert.equal(state.petXp.panda, 170);
+  assert.equal(exportsObject.petLevel(170).level, 2);
+  assert.equal(exportsObject.petEnjoys('fox', 'Jumping jacks'), true);
+});

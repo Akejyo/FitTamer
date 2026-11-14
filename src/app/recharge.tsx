@@ -12,7 +12,7 @@ import {
   Title,
   c,
 } from "@/components/demo/ui";
-import { pets, today, useDemo } from "@/state/demo";
+import { ENJOY_BONUS, petEnjoys, pets, today, useDemo } from "@/state/demo";
 const activities = [
   {
     name: "Jumping jacks",
@@ -74,7 +74,7 @@ export default function Recharge() {
   const list = rerolled ? [1, 2, 4] : [0, 1, 3];
   const pet = pets.find((p) => p.id === state.activePet)!;
   const rewardXP = activity
-    ? activity.xp + (activity.name === pet.activity ? 5 : 0)
+    ? activity.xp + (petEnjoys(pet.id, activity.name) ? ENJOY_BONUS : 0)
     : 0;
   function finish() {
     if (!activity || done || remaining > 0) return;
@@ -176,9 +176,13 @@ export default function Recharge() {
               <Copy muted>
                 +{activities[index].energy} energy · +
                 {activities[index].xp +
-                  (activities[index].name === pet.activity ? 5 : 0)}{" "}
+                  (petEnjoys(pet.id, activities[index].name)
+                    ? ENJOY_BONUS
+                    : 0)}{" "}
                 XP
-                {activities[index].name === pet.activity ? " · +5 bonus" : ""}
+                {petEnjoys(pet.id, activities[index].name)
+                  ? ` · ${pet.emoji} loves this! +${ENJOY_BONUS} bonus`
+                  : ""}
               </Copy>
               <Button label="Start →" onPress={() => setSelected(index)} />
             </Card>

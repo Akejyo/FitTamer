@@ -4,18 +4,31 @@ import {
   Badge,
   Button,
   Card,
+  Copy,
   Go,
+  Progress,
   Row,
   rarityTone,
   Screen,
   Title,
   c,
 } from "@/components/demo/ui";
-import { pets, useDemo } from "@/state/demo";
+import { ENJOY_BONUS, petLevel, pets, useDemo } from "@/state/demo";
+function formatDate(iso?: string) {
+  if (!iso) return "Unknown";
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 export default function Pets() {
   const { state, dispatch } = useDemo();
   const [selected, setSelected] = useState(state.activePet);
   const pet = pets.find((p) => p.id === selected)!;
+  const xp = state.petXp[pet.id] ?? 0;
+  const { level, progress, toNext } = petLevel(xp);
   return (
     <Screen>
       <Row>
@@ -30,8 +43,33 @@ export default function Pets() {
               {pet.rarity.toUpperCase()}
             </Badge>
             <Title>{pet.name}</Title>
+            <Badge tone="yellow">LEVEL {level}</Badge>
           </View>
         </Row>
+        <Progress
+          value={progress}
+          label={`${xp} XP · ${toNext} to level ${level + 1}`}
+        />
+        <Row>
+          <Copy muted>🥚 Hatched</Copy>
+          <Copy>{formatDate(state.hatchedAt[pet.id])}</Copy>
+        </Row>
+        <View style={{ gap: 6 }}>
+          <Copy muted>✨ Fun fact</Copy>
+          <Copy>{pet.fact}</Copy>
+        </View>
+        <View style={{ gap: 8 }}>
+          <Copy muted>
+            💪 Favorite workouts · +{ENJOY_BONUS} XP boost when active
+          </Copy>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+            {pet.enjoys.map((w) => (
+              <Badge key={w} tone="green">
+                {w.toUpperCase()}
+              </Badge>
+            ))}
+          </View>
+        </View>
         <Button
           label={
             state.activePet === selected

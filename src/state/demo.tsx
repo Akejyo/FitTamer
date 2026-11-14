@@ -1,27 +1,52 @@
 import { createContext, useContext, useReducer, type ReactNode } from "react";
-export const pets = [
+export type Pet = {
+  id: string;
+  name: string;
+  emoji: string;
+  rarity: string;
+  /** Workouts this pet loves — completing one grants bonus XP. */
+  enjoys: string[];
+  fact: string;
+};
+export const pets: Pet[] = [
   {
     id: "panda",
     name: "Panda",
     emoji: "🐼",
-    activity: "Planks",
     rarity: "Common",
+    enjoys: ["Planks", "Standing stretch"],
+    fact: "Panda does a happy somersault every time you finish a plank, then naps for exactly 4 minutes.",
   },
   {
     id: "fox",
     name: "Ember",
     emoji: "🦊",
-    activity: "Campus walks",
     rarity: "Rare",
+    enjoys: ["Runs", "Jumping jacks"],
+    fact: "Ember's tail glows a little warmer with every step you take together.",
   },
   {
     id: "frog",
     name: "Sprout",
     emoji: "🐸",
-    activity: "Jumping jacks",
     rarity: "Super Rare",
+    enjoys: ["Jumping jacks", "Standing stretch"],
+    fact: "Sprout once out-jumped a library cart and still talks about it.",
   },
 ];
+/** Extra XP for doing a workout your active pet enjoys. */
+export const ENJOY_BONUS = 5;
+export const XP_PER_LEVEL = 100;
+export function petEnjoys(petId: string, workout: string) {
+  return !!pets.find((p) => p.id === petId)?.enjoys.includes(workout);
+}
+export function petLevel(xp: number) {
+  return {
+    level: Math.floor(xp / XP_PER_LEVEL) + 1,
+    progress: ((xp % XP_PER_LEVEL) / XP_PER_LEVEL) * 100,
+    toNext: XP_PER_LEVEL - (xp % XP_PER_LEVEL),
+  };
+}
 export const DEFAULT_AVATAR = "👤";
 export const avatarOptions = [
   DEFAULT_AVATAR,
@@ -72,6 +97,10 @@ type State = {
   friends: Friend[];
   username: string;
   avatar: string;
+  /** XP earned by each pet while it was your active companion. */
+  petXp: Record<string, number>;
+  /** Hatch date (YYYY-MM-DD) for each unlocked pet. */
+  hatchedAt: Record<string, string>;
 };
 const initial: State = {
   energy: 25,
@@ -92,6 +121,8 @@ const initial: State = {
   friends,
   username: "User",
   avatar: DEFAULT_AVATAR,
+  petXp: { panda: 120 },
+  hatchedAt: { panda: today() },
 };
 type Action =
   | {
@@ -177,6 +208,7 @@ export function demoReducer(s: State, a: Action): State {
         xp: s.xp + a.xp,
         mood: "Refreshed",
         minutes: s.minutes + a.minutes,
+        petXp: addPetXp(s, a.xp),
       };
     case "mood":
       return {
@@ -195,12 +227,18 @@ export function demoReducer(s: State, a: Action): State {
             minutes: s.minutes + 10,
             mood: "Happy",
             energy: Math.min(100, s.energy + 30),
+            petXp: addPetXp(s, a.xp),
           };
     case "claim": {
       const next = pets.find((p) => !s.unlocked.includes(p.id));
       return !s.eggs || !next
         ? s
-        : { ...s, eggs: s.eggs - 1, unlocked: [...s.unlocked, next.id] };
+        : {
+            ...s,
+            eggs: s.eggs - 1,
+            unlocked: [...s.unlocked, next.id],
+            hatchedAt: { ...s.hatchedAt, [next.id]: today() },
+          };
     }
     case "select":
       return s.unlocked.includes(a.id) ? { ...s, activePet: a.id } : s;
@@ -240,7 +278,12 @@ export function demoReducer(s: State, a: Action): State {
     case "evolve":
       return s.evolved || !s.party?.hatched || partyMinutes(s) < s.goal
         ? s
-        : { ...s, evolved: true, xp: s.xp + 100 };
+        : {
+            ...s,
+            evolved: true,
+            xp: s.xp + 100,
+            petXp: addPetXp(s, 100),
+          };
     case "reroll":
       return {
         ...s,
@@ -267,6 +310,9 @@ export function useDemo() {
 }
 export function today() {
   return new Date().toLocaleDateString("en-CA");
+}
+function addPetXp(s: State, xp: number) {
+  return { ...s.petXp, [s.activePet]: (s.petXp[s.activePet] ?? 0) + xp };
 }
 export function partyMinutes(s: State) {
   return (
