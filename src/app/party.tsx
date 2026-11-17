@@ -36,7 +36,10 @@ export default function Party() {
               <Text style={{ fontSize: 32 }}>{state.party.logo}</Text>
               <View style={{ flex: 1 }}>
                 <Title>{state.party.name}</Title>
-                <Copy muted>You + {state.party.members.length} friends</Copy>
+                <Copy muted>
+                  You + {state.party.members.length}{" "}
+                  {state.party.members.length === 1 ? "friend" : "friends"}
+                </Copy>
               </View>
               <Badge>LV {state.evolved ? 2 : 1}</Badge>
             </Row>
@@ -101,7 +104,7 @@ export default function Party() {
           </Card>
         </>
       ) : (
-        <Card tint={c.lime}>
+        <Card tint={c.highlight}>
           <Text style={{ fontSize: 65, textAlign: "center" }}>🥚🌱</Text>
           <Title>Create a party</Title>
           <Button label="+ Create a party" onPress={() => setCreate(true)} />

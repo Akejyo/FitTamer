@@ -12,6 +12,7 @@ import {
   c,
 } from "@/components/demo/ui";
 import { pets, useDemo } from "@/state/demo";
+const SLOTS = 12;
 export default function Pets() {
   const { state, dispatch } = useDemo();
   const [selected, setSelected] = useState(state.activePet);
@@ -20,7 +21,7 @@ export default function Pets() {
     <Screen>
       <Row>
         <Title>Your collection</Title>
-        <Badge tone="purple">{state.unlocked.length} / 100 DISCOVERED</Badge>
+        <Badge tone="purple">{state.unlocked.length} / {SLOTS} DISCOVERED</Badge>
       </Row>
       <Card tint={c.tint}>
         <Row>
@@ -50,7 +51,7 @@ export default function Pets() {
         showsHorizontalScrollIndicator={false}
         scrollEnabled={false}
         numColumns={3}
-        data={Array.from({ length: 12 }, (_, i) => i)}
+        data={Array.from({ length: SLOTS }, (_, i) => i)}
         keyExtractor={(i) => String(i)}
         columnWrapperStyle={{ gap: 12 }}
         contentContainerStyle={{ gap: 12 }}
@@ -81,7 +82,7 @@ export default function Pets() {
                 {unlocked ? p.emoji : "?"}
               </Text>
               {unlocked && (
-                <Text style={{ color: c.ink, fontSize: 11 }}>{p.name}</Text>
+                <Text style={{ color: c.ink, fontSize: 12 }}>{p.name}</Text>
               )}
             </Pressable>
           );

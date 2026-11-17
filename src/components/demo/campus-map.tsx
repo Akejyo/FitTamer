@@ -36,11 +36,11 @@ export function CampusMap({
           style={[
             m.place,
             { left: p.left, top: p.top },
-            !hunt && selected === i && { borderColor: c.green, borderWidth: 2 },
+            !hunt && selected === i && { borderColor: c.accent, borderWidth: 2 },
           ]}
         >
           <Text style={{ fontSize: 27 }}>{p.icon}</Text>
-          <Text style={{ fontSize: 10, color: c.ink, fontWeight: "600" }}>
+          <Text style={{ fontSize: 11, color: c.ink, fontWeight: "600" }}>
             {p.name}
           </Text>
         </Pressable>
@@ -122,7 +122,7 @@ const m = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 20,
-    backgroundColor: c.green,
+    backgroundColor: c.accent,
     borderWidth: 4,
     borderColor: "#FFFFFF",
     alignItems: "center",
@@ -132,8 +132,8 @@ const m = StyleSheet.create({
     position: "absolute",
     bottom: 12,
     alignSelf: "center",
-    color: c.green,
-    fontSize: 9,
+    color: c.accent,
+    fontSize: 10,
     letterSpacing: 1,
   },
 });

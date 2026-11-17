@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { Platform, Share, Text } from "react-native";
 import {
@@ -14,7 +14,7 @@ import {
   c,
 } from "@/components/demo/ui";
 import { CampusMap } from "@/components/demo/campus-map";
-import { FriendPicker } from "@/components/demo/friend-picker";
+import { FriendPicker, type InviteMode } from "@/components/demo/friend-picker";
 import { pets, useDemo } from "@/state/demo";
 export default function Hunt() {
   const { state, dispatch } = useDemo();
@@ -27,8 +27,20 @@ export default function Hunt() {
   const [sharing, setSharing] = useState(false);
   const [shareNote, setShareNote] = useState("");
   const [abandon, setAbandon] = useState(false);
+  const [mode, setMode] = useState<InviteMode>("Join hunt");
   const pet = pets.find((p) => p.id === state.activePet)!;
   const complete = state.completed.includes("hunt");
+  // Leaving mid-hunt (tab switch, back) must not leave the pet stuck "hiding".
+  const inProgress = useRef(false);
+  useEffect(() => {
+    inProgress.current = started && !complete;
+  }, [started, complete]);
+  useEffect(
+    () => () => {
+      if (inProgress.current) dispatch({ type: "endHunt" });
+    },
+    [dispatch],
+  );
   const message = `I found ${pet.name} near the coffee cart in FitTamer! +60 XP and a mystery egg. A little move, a big adventure. (Demo hunt)`;
   async function share() {
     if (Platform.OS === "web") {
@@ -64,8 +76,12 @@ export default function Hunt() {
         }
       />
       {invited.length > 0 && (
-        <Card tint={c.lime}>
-          <Copy>💬 {invited[0]}: “You’ve got this! Keep exploring!”</Copy>
+        <Card tint={c.highlight}>
+          <Copy>
+            {mode === "Join hunt"
+              ? `🏃 ${invited[0]} joined your hunt: “Let’s find them!”`
+              : `💬 ${invited[0]} is cheering: “You’ve got this! Keep exploring!”`}
+          </Copy>
         </Card>
       )}
       <Card>
@@ -116,6 +132,8 @@ export default function Hunt() {
         selected={invited}
         onChange={setInvited}
         hunt
+        mode={mode}
+        onModeChange={setMode}
       />
       <Sheet
         visible={found}
@@ -140,7 +158,7 @@ export default function Hunt() {
       >
         <Text style={{ fontSize: 70, textAlign: "center" }}>{pet.emoji}💚</Text>
         <Title>+60 XP · 🥚 Mystery egg</Title>
-        <Copy>+30 energy · +10 party minutes</Copy>
+        <Copy>+30 energy · +10 movement minutes</Copy>
         <Button label="Share hunt summary" secondary onPress={share} />
         <Button label="Back home →" onPress={() => router.replace("/")} />
       </Sheet>
@@ -174,7 +192,7 @@ export default function Hunt() {
         <Button
           label="Back home"
           onPress={() => {
-            dispatch({ type: "mood", mood: "Happy" });
+            dispatch({ type: "endHunt" });
             router.replace("/");
           }}
         />

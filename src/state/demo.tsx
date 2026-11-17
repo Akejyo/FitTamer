@@ -22,6 +22,8 @@ export const pets = [
     rarity: "Super Rare",
   },
 ];
+export const HAPPY_ENERGY = 50;
+export const EGG_TRADE_XP = 25;
 export const DEFAULT_AVATAR = "👤";
 export const avatarOptions = [
   DEFAULT_AVATAR,
@@ -65,6 +67,8 @@ type State = {
   goal: number;
   activity: string;
   minutes: number;
+  /** Personal minutes at the moment the current party was created. */
+  partyBase: number;
   evolved: boolean;
   rechargeReroll: string | null;
   questReroll: string | null;
@@ -85,6 +89,7 @@ const initial: State = {
   goal: 90,
   activity: "Walking",
   minutes: 0,
+  partyBase: 0,
   evolved: false,
   rechargeReroll: null,
   questReroll: null,
@@ -111,6 +116,12 @@ type Action =
     }
   | {
       type: "claim";
+    }
+  | {
+      type: "trade";
+    }
+  | {
+      type: "endHunt";
     }
   | {
       type: "select";
@@ -182,7 +193,17 @@ export function demoReducer(s: State, a: Action): State {
       return {
         ...s,
         mood: a.mood,
-        energy: a.mood === "Sleepy" ? 25 : s.energy,
+        // A hiding pet always has a hunt to find it in: re-arm a finished one.
+        completed:
+          a.mood === "Hiding"
+            ? s.completed.filter((id) => id !== "hunt")
+            : s.completed,
+        energy:
+          a.mood === "Sleepy"
+            ? 25
+            : a.mood === "Happy"
+              ? Math.max(s.energy, HAPPY_ENERGY)
+              : s.energy,
       };
     case "quest":
       return s.completed.includes(a.id)
@@ -202,6 +223,17 @@ export function demoReducer(s: State, a: Action): State {
         ? s
         : { ...s, eggs: s.eggs - 1, unlocked: [...s.unlocked, next.id] };
     }
+    case "trade": {
+      // Eggs that can no longer hatch a new companion convert into XP.
+      const hasNext = pets.some((p) => !s.unlocked.includes(p.id));
+      return !s.eggs || hasNext
+        ? s
+        : { ...s, eggs: 0, xp: s.xp + s.eggs * EGG_TRADE_XP };
+    }
+    case "endHunt":
+      return s.mood === "Hiding"
+        ? { ...s, mood: s.energy < HAPPY_ENERGY ? "Sleepy" : "Happy" }
+        : s;
     case "select":
       return s.unlocked.includes(a.id) ? { ...s, activePet: a.id } : s;
     case "party":
@@ -213,6 +245,7 @@ export function demoReducer(s: State, a: Action): State {
           members: a.members,
           hatched: false,
         },
+        partyBase: s.minutes,
         evolved: false,
       };
     case "members":
@@ -268,10 +301,14 @@ export function useDemo() {
 export function today() {
   return new Date().toLocaleDateString("en-CA");
 }
+/** Minutes you contributed since the current party was created. */
+export function myPartyMinutes(s: State) {
+  return Math.max(0, s.minutes - s.partyBase);
+}
 export function partyMinutes(s: State) {
   return (
-    s.minutes +
-    friends
+    myPartyMinutes(s) +
+    s.friends
       .filter((f) => s.party?.members.includes(f.name))
       .reduce((sum, f) => sum + f.minutes, 0)
   );

@@ -15,6 +15,7 @@ import {
   moodTone,
   s,
 } from "@/components/demo/ui";
+import { Bob } from "@/components/demo/bob";
 import { pets, useDemo } from "@/state/demo";
 
 export default function Home() {
@@ -35,11 +36,13 @@ export default function Home() {
           </Badge>
         </Row>
         <View style={s.petStage}>
-          <Text style={s.petEmoji}>
-            {state.mood === "Hiding" ? "❔" : pet.emoji}
-          </Text>
+          <Bob calm={state.mood === "Sleepy"}>
+            <Text style={s.petEmoji}>
+              {state.mood === "Hiding" ? "❔" : pet.emoji}
+            </Text>
+          </Bob>
           {state.mood === "Sleepy" && (
-            <Text style={{ color: c.green, fontWeight: "600" }}>Z z z …</Text>
+            <Text style={{ color: c.accent, fontWeight: "600" }}>Z z z …</Text>
           )}
         </View>
         <Progress
@@ -49,9 +52,13 @@ export default function Home() {
         />
         {state.mood === "Hiding" ? (
           <Go label={`Find ${pet.name} →`} href="/hunt" />
-        ) : state.energy < 50 ? (
-          <Go label="ϟ Recharge" href="/recharge" />
-        ) : null}
+        ) : (
+          <Go
+            label="ϟ Recharge"
+            href="/recharge"
+            secondary={state.energy >= 50}
+          />
+        )}
       </Card>
       {state.eggs > 0 && (
         <Card tint={c.peach}>

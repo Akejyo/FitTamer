@@ -89,7 +89,7 @@ export default function Recharge() {
   return (
     <Screen back>
       {done ? (
-        <Card tint={c.lime}>
+        <Card tint={c.highlight}>
           <Text style={{ fontSize: 80, textAlign: "center" }}>
             {pet.emoji}✨
           </Text>
@@ -111,7 +111,7 @@ export default function Recharge() {
             <Text
               style={{
                 fontSize: 64,
-                color: c.green,
+                color: c.accent,
                 textAlign: "center",
                 fontWeight: "800",
                 fontVariant: ["tabular-nums"],

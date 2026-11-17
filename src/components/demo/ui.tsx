@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Modal,
   Pressable,
@@ -11,13 +11,19 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, usePathname, type Href } from "expo-router";
 import { Image } from "expo-image";
+import Animated, {
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { SymbolView, type SymbolViewProps } from "expo-symbols";
 import { avatarOptions, DEFAULT_AVATAR, useDemo } from "@/state/demo";
 export const c = {
   ink: "#E8EDF4", // main text
   muted: "#95A1B2", // secondary text
-  green: "#5B9BEA", // blue accent (text, progress, markers)
-  lime: "#1E3550", // blue highlight card
+  accent: "#5B9BEA", // blue accent (text, progress, markers)
+  highlight: "#1E3550", // blue highlight card
   cream: "#121821", // app background
   surface: "#1C2430", // cards, bottom bar
   tint: "#1A2A3E", // soft blue card
@@ -118,7 +124,7 @@ export function Go({
   );
 }
 const badgeTones = {
-  blue: { bg: c.lime, text: c.green },
+  blue: { bg: c.highlight, text: c.accent },
   green: { bg: c.mintBg, text: c.mint },
   darkBlue: { bg: c.navyBg, text: c.navy },
   purple: { bg: c.purpleBg, text: c.purple },
@@ -153,12 +159,19 @@ export function Badge({
 export function Progress({
   value,
   label,
-  color = c.green,
+  color = c.accent,
 }: {
   value: number;
   label: string;
   color?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+  const pct = Math.max(0, Math.min(value, 100));
+  const width = useSharedValue(pct);
+  useEffect(() => {
+    width.value = reduceMotion ? pct : withTiming(pct, { duration: 450 });
+  }, [pct, reduceMotion, width]);
+  const fillStyle = useAnimatedStyle(() => ({ width: `${width.value}%` }));
   return (
     <View style={{ gap: 8 }}>
       <Row>
@@ -171,13 +184,11 @@ export function Progress({
         accessibilityValue={{ min: 0, max: 100, now: Math.round(value) }}
         style={s.track}
       >
-        <View
+        <Animated.View
           style={[
             s.fill,
-            {
-              width: `${Math.max(0, Math.min(value, 100))}%`,
-              backgroundColor: value >= 100 ? c.mint : color,
-            },
+            fillStyle,
+            { backgroundColor: value >= 100 ? c.mint : color },
           ]}
         />
       </View>
@@ -494,13 +505,11 @@ function ProfileButton() {
     </>
   );
 }
-export function Screen({
-  children,
-  back = false,
-}: {
-  children: ReactNode;
-  back?: boolean;
-}) {
+/**
+ * App chrome (header + tab bar). Mounted once in the root layout so tab
+ * switches don't rebuild it, and the profile sheet and nav state survive.
+ */
+export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
   return (
     <SafeAreaView style={s.safe}>
@@ -536,24 +545,7 @@ export function Screen({
             </View>
           </Row>
         </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          style={{ flex: 1 }}
-          contentContainerStyle={s.content}
-          keyboardShouldPersistTaps="handled"
-        >
-          {back && (
-            <Button
-              label="← Back"
-              secondary
-              onPress={() =>
-                router.canGoBack() ? router.back() : router.replace("/")
-              }
-            />
-          )}
-          {children}
-        </ScrollView>
+        <View style={{ flex: 1 }}>{children}</View>
         <View style={s.nav}>
           {nav.map((n) => {
             const active =
@@ -577,7 +569,7 @@ export function Screen({
                 />
                 <Text
                   style={{
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: "700",
                     color: active ? c.ink : c.muted,
                   }}
@@ -590,6 +582,35 @@ export function Screen({
         </View>
       </View>
     </SafeAreaView>
+  );
+}
+/** Scrollable page content. The chrome comes from <Shell> in the root layout. */
+export function Screen({
+  children,
+  back = false,
+}: {
+  children: ReactNode;
+  back?: boolean;
+}) {
+  return (
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      style={{ flex: 1 }}
+      contentContainerStyle={s.content}
+      keyboardShouldPersistTaps="handled"
+    >
+      {back && (
+        <Button
+          label="← Back"
+          secondary
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace("/")
+          }
+        />
+      )}
+      {children}
+    </ScrollView>
   );
 }
 export const s = StyleSheet.create({
@@ -644,7 +665,7 @@ export const s = StyleSheet.create({
     gap: 2,
   },
   statValue: { color: c.ink, fontSize: 18, fontWeight: "800" },
-  statLabel: { color: c.muted, fontSize: 11, fontWeight: "700" },
+  statLabel: { color: c.muted, fontSize: 12, fontWeight: "700" },
   brand: { color: c.ink, fontSize: 21, fontWeight: "800", letterSpacing: -0.7 },
   content: { padding: 24, gap: 20, paddingBottom: 30 },
   title: { fontSize: 19, fontWeight: "700", color: c.ink, flexShrink: 1 },
@@ -680,17 +701,17 @@ export const s = StyleSheet.create({
     textAlign: "center",
   },
   badge: {
-    backgroundColor: c.lime,
+    backgroundColor: c.highlight,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 20,
     alignSelf: "flex-start",
   },
   badgeText: {
-    fontSize: 9,
-    letterSpacing: 0.8,
+    fontSize: 11,
+    letterSpacing: 0.6,
     fontWeight: "800",
-    color: c.green,
+    color: c.accent,
   },
   track: {
     height: 9,
@@ -698,7 +719,7 @@ export const s = StyleSheet.create({
     backgroundColor: "#2A3546",
     overflow: "hidden",
   },
-  fill: { height: "100%", backgroundColor: c.green, borderRadius: 9 },
+  fill: { height: "100%", backgroundColor: c.accent, borderRadius: 9 },
   input: {
     minHeight: 50,
     borderRadius: 14,

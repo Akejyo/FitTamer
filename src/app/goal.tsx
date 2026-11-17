@@ -13,7 +13,7 @@ import {
   Title,
   c,
 } from "@/components/demo/ui";
-import { partyMinutes, useDemo } from "@/state/demo";
+import { myPartyMinutes, partyMinutes, useDemo } from "@/state/demo";
 export default function Goal() {
   const { state, dispatch } = useDemo();
   const [minutes, setMinutes] = useState(state.goal);
@@ -24,7 +24,7 @@ export default function Goal() {
   const contributors = [
     {
       name: `${state.username} (you)`,
-      minutes: state.minutes,
+      minutes: myPartyMinutes(state),
       activity: state.activity,
       emoji: state.avatar,
     },
@@ -191,7 +191,7 @@ export default function Goal() {
               onPress={() => dispatch({ type: "evolve" })}
             />
             {state.evolved && (
-              <Card tint={c.lime}>
+              <Card tint={c.highlight}>
                 <Title>Party level 1 → 2</Title>
                 <Copy>You did this together. +100 XP collected!</Copy>
               </Card>

@@ -10,7 +10,7 @@ import {
   Title,
   c,
 } from "@/components/demo/ui";
-import { pets, useDemo } from "@/state/demo";
+import { EGG_TRADE_XP, pets, useDemo } from "@/state/demo";
 export default function Egg() {
   const { state, dispatch } = useDemo();
   const [hatched, setHatched] = useState(false);
@@ -30,8 +30,18 @@ export default function Egg() {
         ) : !next ? (
           <>
             <Title>Collection complete</Title>
+            <Copy>
+              Every companion is already yours. Trade your spare{" "}
+              {state.eggs === 1 ? "egg" : `${state.eggs} eggs`} for{" "}
+              {state.eggs * EGG_TRADE_XP} XP.
+            </Copy>
+            <Button
+              label={`Trade for ${state.eggs * EGG_TRADE_XP} XP`}
+              onPress={() => dispatch({ type: "trade" })}
+            />
             <Button
               label="View collection"
+              secondary
               onPress={() => router.replace("/pets")}
             />
           </>

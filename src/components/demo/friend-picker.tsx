@@ -2,22 +2,27 @@ import { useState } from "react";
 import { Text } from "react-native";
 import { useDemo } from "@/state/demo";
 import { Button, Copy, Field, Row, Sheet } from "./ui";
+export const INVITE_MODES = ["Join hunt", "Watch & cheer"] as const;
+export type InviteMode = (typeof INVITE_MODES)[number];
 export function FriendPicker({
   visible,
   onClose,
   selected,
   onChange,
   hunt = false,
+  mode = "Join hunt",
+  onModeChange,
 }: {
   visible: boolean;
   onClose: () => void;
   selected: string[];
   onChange: (names: string[]) => void;
   hunt?: boolean;
+  mode?: InviteMode;
+  onModeChange?: (mode: InviteMode) => void;
 }) {
   const { state } = useDemo();
   const [query, setQuery] = useState("");
-  const [mode, setMode] = useState("Join hunt");
   const filtered = state.friends.filter((f) =>
     f.name.toLowerCase().includes(query.toLowerCase()),
   );
@@ -34,12 +39,12 @@ export function FriendPicker({
       />
       {hunt && (
         <Row>
-          {["Join hunt", "Watch & cheer"].map((m) => (
+          {INVITE_MODES.map((m) => (
             <Button
               key={m}
               label={`${mode === m ? "✓ " : ""}${m}`}
               secondary={mode !== m}
-              onPress={() => setMode(m)}
+              onPress={() => onModeChange?.(m)}
             />
           ))}
         </Row>

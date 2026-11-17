@@ -55,6 +55,9 @@ export default function Quests() {
   const [arrived, setArrived] = useState(false);
   const rerolled = state.questReroll === today();
   const q = active === null ? null : quests[active];
+  const todays = rerolled ? [1, 2, 3] : [0, 1, 2];
+  const offered = todays.includes(selected);
+  const selectedDone = state.completed.includes(quests[selected].id);
   function start(index: number) {
     setActive(index);
     setArrived(false);
@@ -79,11 +82,13 @@ export default function Quests() {
             </Copy>
             <Button
               label={
-                state.completed.includes(quests[selected].id)
+                selectedDone
                   ? "Completed ✓"
-                  : "Start quest →"
+                  : !offered
+                    ? "Not on today’s list"
+                    : "Start quest →"
               }
-              disabled={state.completed.includes(quests[selected].id)}
+              disabled={selectedDone || !offered}
               onPress={() => start(selected)}
             />
           </Card>
@@ -95,7 +100,7 @@ export default function Quests() {
         </>
       ) : (
         <>
-          {(rerolled ? [1, 2, 3] : [0, 1, 2]).map((i) => (
+          {todays.map((i) => (
             <Card key={quests[i].id}>
               <Row>
                 <Text style={{ fontSize: 32 }}>{quests[i].icon}</Text>
@@ -145,7 +150,7 @@ export default function Quests() {
           <>
             <Text style={{ fontSize: 70, textAlign: "center" }}>🥚✨</Text>
             <Copy>+{q?.xp} XP · +30 energy · 1 mystery egg</Copy>
-            <Copy>+10 party minutes</Copy>
+            <Copy>+10 movement minutes</Copy>
             <Button
               label="Hatch your reward →"
               onPress={() => {
